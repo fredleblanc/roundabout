@@ -100,9 +100,7 @@
 
 	internalData = {
 		autoplayInterval: null,
-		autoplayResumeTimeout: null,
 		autoplayIsRunning: false,
-		autoplayResumeDuration: null,
 		animating: false,
 		childInFocus: -1,
 		touchMoveStartPosition: null,
@@ -152,7 +150,6 @@
 									startingChild: startingChild,
 									bearing: startBearing,
 									oppositeOfFocusBearing: methods.normalize.apply(null, [settings.focusBearing - 180]),
-									autoplayLastMove: now,
 									dragBearing: startBearing,
 									period: period
 								}
@@ -212,7 +209,7 @@
 					if (settings.btnStartAutoplay) {
 						$(settings.btnStartAutoplay)
 							.bind("click", function() {
-								methods.startOrResumeAutoplay.apply(self);
+								methods.startAutoplay.apply(self);
 								return false;
 							});
 					}
@@ -221,7 +218,7 @@
 					if (settings.btnStopAutoplay) {
 						$(settings.btnStopAutoplay)
 							.bind("click", function() {
-								methods.pauseAutoplay.apply(self);
+								methods.stopAutoplay.apply(self);
 								return false;
 							});
 					}
@@ -230,10 +227,10 @@
 					if (settings.autoplayPauseOnHover) {
 						self
 							.bind("mouseenter", function() {
-								methods.pauseAutoplay.apply(self);
+								methods.stopAutoplay.apply(self);
 							})
 							.bind("mouseleave", function() {
-								methods.resumeAutoplay.apply(self);
+								methods.startAutoplay.apply(self);
 							});
 					}
 
@@ -921,10 +918,8 @@
 
 					callback = callback || data.autoplayCallback || function() {};
 
-					clearTimeout(data.autoplayResumeDuration);
 					clearInterval(data.autoplayInterval);
 					data.autoplayInterval = setInterval(function() {
-						data.autoplayLastMove = $.now(); 
 						methods.animateToNextChild.apply(self, [callback]);
 					}, data.autoplayDuration);
 					data.autoplayIsRunning = true;
@@ -938,74 +933,10 @@
 		stopAutoplay: function() {
 			return this
 				.each(function() {
-					clearTimeout($(this).data("roundabout").autoplayResumeDuration);
 					clearInterval($(this).data("roundabout").autoplayInterval);
 					$(this).data("roundabout").autoplayInterval = null;
 					$(this).data("roundabout").autoplayIsRunning = false;
 					$(this).trigger("autoplayStop");
-				});
-		},
-
-
-		// pauseAutoplay
-		// pauses autoplay temporarily
-		pauseAutoplay: function() {
-			return this
-				.each(function() {
-					var self = $(this),
-					    data = self.data("roundabout");
-
-					clearTimeout(data.autoplayResumeTimeout);
-					clearInterval(data.autoplayInterval);
-					data.autoplayInterval = null;
-					data.autoplayResumeTimeout = null;
-					data.autoplayResumeDuration = $.now() - data.autoplayLastMove;
-					self.trigger("autoplayPause");
-				});
-		},
-
-
-		// resumeAutoplay
-		// resumes autoplay if paused
-		resumeAutoplay: function(callback) {			
-			return this
-				.each(function() {
-					var self = $(this),
-					    data = self.data("roundabout");
-				
-					callback = callback || data.autoplayCallback || function() {};
-
-					if (data.autoplayInterval === null && !methods.isAutoplaying.apply(self)) {
-						// autoplay is not running
-						return;
-					}
-
-					data.autoplayResumeTimeout = setTimeout(function() {
-						methods.startAutoplay.apply(self);
-						methods.animateToNextChild.apply(self, [callback]);
-					}, data.autoplayResumeDuration);
-
-					data.autoplayLastMove = $.now(); 
-					data.autoplayResumeDuration = null;
-					self.trigger("autoplayResume");
-				});
-		},
-		
-		
-		// startOrResumeAutoplay
-		// starts or resumes autoplay if paused or stopped
-		startOrResumeAutoplay: function(callback) {
-			return this
-				.each(function() {
-					callback = callback || $(this).data("roundabout").autoplayCallback || function() {};
-					
-					if (!methods.isAutoplaying.apply($(this))) {
-						// stopped, start it
-						methods.startAutoplay.apply($(this));
-					} else if (!$(this).data("roundabout").autoplayInterval) {
-						// paused, resume it
-						methods.resumeAutoplay.apply($(this));
-					}
 				});
 		},
 		
@@ -1021,16 +952,9 @@
 					callback = callback || data.autoplayCallback || function() {};
 
 					if (!methods.isAutoplaying.apply($(this))) {
-						// start autoplay
 						methods.startAutoplay.apply($(this), [callback]);
 					} else {
-						if (!data.autoplayInterval) {
-							// currently paused
-							methods.resumeAutoplay.apply($(this), [callback]);
-						} else {
-							// currently resumed
-							methods.pauseAutoplay.apply($(this), [callback]);
-						}
+						methods.stopAutoplay.apply($(this), [callback]);
 					}
 				});
 		},
