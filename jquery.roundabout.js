@@ -94,8 +94,8 @@
 		dropCallback: function() {},
 		dragAxis: "x",
 		dragFactor: 4,
-		triggerChildFocusEvents: true,
-		triggerChildBlurEvents: true
+		triggerFocusEvents: true,
+		triggerBlurEvents: true
 	};
 
 	internalData = {
@@ -422,7 +422,7 @@
 
 					if (inFocus !== info.inFocus) {
 						// blur old child
-						if (data.triggerChildBlurEvents) {
+						if (data.triggerBlurEvents) {
 							self.children(data.childSelector)
 								.eq(info.inFocus)
 									.trigger("blur");
@@ -430,7 +430,7 @@
 
 						data.childInFocus = inFocus;
 
-						if (data.triggerChildFocusEvents && inFocus !== -1) {
+						if (data.triggerFocusEvents && inFocus !== -1) {
 							// focus new child
 							self.children(data.childSelector)
 								.eq(inFocus)
