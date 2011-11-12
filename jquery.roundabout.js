@@ -40,7 +40,7 @@
  */
 ;(function($) {
 	var defaults, internalData, methods;
-	
+
 	// add default shape
 	$.extend({
 		roundaboutShapes: {
@@ -109,10 +109,10 @@
 	};
 
 	methods = {
-		
+
 		// starters
 		// -----------------------------------------------------------------------
-		
+
 		// init
 		// starts up roundabout
 		init: function(options, callback) {
@@ -302,7 +302,7 @@
 
 		// initChildren
 		// applys settings to child elements, starts roundabout
-		initChildren: function(callback) {			
+		initChildren: function(callback) {
 			var self = $(this),
 			    data = self.data("roundabout");
 
@@ -357,7 +357,7 @@
 
 
 		// positioning
-		// -----------------------------------------------------------------------		
+		// -----------------------------------------------------------------------
 
 		// updateChildren
 		// move children elements into their proper locations
@@ -688,7 +688,7 @@
 						data.animating = false;
 						data.lastAnimationStep = false;
 						data.dragBearing = bearing;
-						
+
 						callback.apply(self);
 					}
 				});
@@ -734,7 +734,7 @@
 									upper: (data.period * (j + 1))
 								};
 								range.upper = (j === length - 1) ? 360 : range.upper;
-								
+
 								if (bearing <= Math.ceil(range.upper) && bearing >= Math.floor(range.lower)) {
 									if (length === 2 && bearing === 360) {
 										methods.animateToDelta.apply(self, [-180, duration, easing, callback]);
@@ -775,7 +775,7 @@
 		// animates roundabout to the nearest child
 		animateToNearestChild: function(duration, easing, callback) {
 			callback = callback || function() {};
-			
+
 			// find callback
 			if ($.isFunction(easing)) {
 				callback = easing;
@@ -839,7 +839,7 @@
 		// animates roundabout to a given delta (in degrees)
 		animateToDelta: function(degrees, duration, easing, callback) {
 			callback = callback || function() {};
-			
+
 			// find callback
 			if ($.isFunction(easing)) {
 				callback = easing;
@@ -848,7 +848,7 @@
 				callback = duration;
 				duration = null;
 			}
-			
+
 			return this
 				.each(function() {
 					var delta = $(this).data("roundabout").bearing + degrees;
@@ -870,20 +870,20 @@
 				callback = duration;
 				duration = null;
 			}
-			
+
 			return this
 				.each(function() {
 					var delta = $(this).data("roundabout").bearing - degrees;
 					delta = (Math.abs(360 - delta) < Math.abs(delta)) ? 360 - delta : -delta;
 					delta = (delta > 180) ? -(360 - delta) : delta;
-					
+
 					if (delta !== 0) {
 						methods.animateToDelta.apply($(this), [delta, duration, easing, callback]);
 					}
 				});
 		},
-		
-		
+
+
 		// stopAnimation
 		// if an animation is currently in progress, stop it
 		stopAnimation: function() {
@@ -892,8 +892,8 @@
 					$(this).data("roundabout").stopAnimation = true;
 				});
 		},
-		
-		
+
+
 		// allowAnimation
 		// clears the stop-animation hold placed by stopAnimation
 		allowAnimation: function() {
@@ -910,7 +910,7 @@
 
 		// startAutoplay
 		// starts autoplaying this roundabout
-		startAutoplay: function(callback) {			
+		startAutoplay: function(callback) {
 			return this
 				.each(function() {
 					var self = $(this),
@@ -1018,26 +1018,26 @@
 		// checks that a given child's backDegrees is between two values
 		isChildBackDegreesBetween: function(value1, value2) {
 			var backDegrees = $(this).data("roundabout").backDegrees;
-			
+
 			if (value1 > value2) {
 				return (backDegrees >= value2 && backDegrees < value1);
 			} else {
 				return (backDegrees < value2 && backDegrees >= value1);
 			}
 		},
-		
-		
+
+
 		// getAnimateToMethod
 		// takes a user-entered option and maps it to an animation method
 		getAnimateToMethod: function(effect) {
 			effect = effect.toLowerCase();
-			
+
 			if (effect === "next") {
 				return "animateToNextChild";
 			} else if (effect === "previous") {
 				return "animateToPreviousChild";
 			}
-			
+
 			// default selection
 			return "animateToNearestChild";
 		},
