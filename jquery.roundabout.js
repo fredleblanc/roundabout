@@ -117,7 +117,7 @@
 		// starts up roundabout
 		init: function(options, callback) {
 			var settings,
-			    now = $.now();
+			    now = (new Date).getTime();
 
 			options   = (typeof options === "object") ? options : {};
 			callback  = ($.isFunction(callback)) ? callback : function() {};
@@ -610,7 +610,7 @@
 		// animateToBearing
 		// animates the roundabout to a given bearing, all animations come through here
 		animateToBearing: function(bearing, duration, easing, passedData, callback) {
-			var now = $.now(),
+			var now = (new Date).getTime(),
 			    callback = callback || function() {};
 
 			// find callback function in arguments
