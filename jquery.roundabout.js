@@ -38,7 +38,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-;(function($) {
+(function($) {
+	"use strict";
+	
 	var defaults, internalData, methods;
 
 	// add default shape
@@ -117,7 +119,7 @@
 		// starts up roundabout
 		init: function(options, callback) {
 			var settings,
-			    now = (new Date).getTime();
+			    now = (new Date()).getTime();
 
 			options   = (typeof options === "object") ? options : {};
 			callback  = ($.isFunction(callback)) ? callback : function() {};
@@ -243,7 +245,7 @@
 							}
 						} else if (!$.isFunction(self.drop)) {
 							if (settings.debug) {
-								alert("You do not have the drop plugin loaded.")
+								alert("You do not have the drop plugin loaded.");
 							}
 						} else {
 							self
@@ -610,8 +612,9 @@
 		// animateToBearing
 		// animates the roundabout to a given bearing, all animations come through here
 		animateToBearing: function(bearing, duration, easing, passedData, callback) {
-			var now = (new Date).getTime(),
-			    callback = callback || function() {};
+			var now = (new Date()).getTime();
+
+			callback = callback || function() {};
 
 			// find callback function in arguments
 			if ($.isFunction(passedData)) {
