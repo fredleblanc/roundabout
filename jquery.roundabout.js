@@ -91,7 +91,7 @@
 		autoplayCallback: function() {},
 		enableDrag: false,
 		dropDuration: 600,
-		dropEasing: "easeOutBounce",
+		dropEasing: "swing",
 		dropAnimateTo: "nearest",
 		dropCallback: function() {},
 		dragAxis: "x",
