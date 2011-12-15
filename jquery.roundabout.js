@@ -478,7 +478,7 @@
 					height: factors.height + "px",
 					opacity: (info.opacity.min + (info.opacity.diff * factors.scale)).toFixed(2),
 					zIndex: Math.round(info.zValues.min + (info.zValues.diff * factors.z)),
-					fontSize: (factors.adjustedScale * data.startFontSize).toFixed(0) + "px"
+					fontSize: (factors.adjustedScale * data.startFontSize).toFixed(1) + "px"
 				});
 			data.currentScale = factors.adjustedScale;
 
