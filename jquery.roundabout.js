@@ -139,8 +139,7 @@
 					self
 						.css({  // starting styles
 							padding:   0,
-							position:  holderCSSPosition,
-							zIndex:    settings.minZ
+							position:  holderCSSPosition
 						})
 						.addClass("roundabout-holder")
 						.data(  // starting options
