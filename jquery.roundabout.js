@@ -170,7 +170,7 @@
 										if (!methods.isInFocus.apply(self, [degrees])) {
 											methods.stopAnimation.apply($(this));
 											if (!self.data("roundabout").animating) {
-												methods.animateAngleToFocus.apply(self, [degrees, self.data("roundabout").clickToFocusCallback]);
+												methods.animateBearingToFocus.apply(self, [degrees, self.data("roundabout").clickToFocusCallback]);
 											}
 											return false;
 										}
@@ -742,7 +742,7 @@
 									if (length === 2 && bearing === 360) {
 										methods.animateToDelta.apply(self, [-180, duration, easing, callback]);
 									} else {
-										methods.animateAngleToFocus.apply(self, [range.lower, duration, easing, callback]);
+										methods.animateBearingToFocus.apply(self, [range.lower, duration, easing, callback]);
 									}
 									break;
 								}
@@ -763,7 +763,7 @@
 									if (length === 2 && bearing === 360) {
 										methods.animateToDelta.apply(self, [180, duration, easing, callback]);
 									} else {
-										methods.animateAngleToFocus.apply(self, [range.upper, duration, easing, callback]);
+										methods.animateBearingToFocus.apply(self, [range.upper, duration, easing, callback]);
 									}
 									break;
 								}
@@ -818,7 +818,7 @@
 
 					if (data.childInFocus !== childPosition && !data.animating) {
 						child = self.children(data.childSelector).eq(childPosition);
-						methods.animateAngleToFocus.apply(self, [child.data("roundabout").degrees, duration, easing, callback]);
+						methods.animateBearingToFocus.apply(self, [child.data("roundabout").degrees, duration, easing, callback]);
 					}
 				});
 		},
@@ -860,9 +860,9 @@
 		},
 
 
-		// animateAngleToFocus
+		// animateBearingToFocus
 		// animates roundabout to bring a given angle into focus
-		animateAngleToFocus: function(degrees, duration, easing, callback) {
+		animateBearingToFocus: function(degrees, duration, easing, callback) {
 			callback = callback || function() {};
 
 			// find callback
