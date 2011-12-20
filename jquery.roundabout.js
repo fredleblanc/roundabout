@@ -1,5 +1,5 @@
 /**
- * jQuery Roundabout - v2.1
+ * jQuery Roundabout - v2.1.1
  * http://fredhq.com/projects/roundabout
  *
  * Moves list-items of enabled ordered and unordered lists long
@@ -230,10 +230,10 @@
 						// autoplay pause on hover
 						if (settings.autoplayPauseOnHover) {
 							self
-								.bind("mouseenter.roundabout", function() {
-									methods.stopAutoplay.apply(self);
+								.bind("mouseenter.roundabout.autoplay", function() {
+									methods.stopAutoplay.apply(self, [true]);
 								})
-								.bind("mouseleave.roundabout", function() {
+								.bind("mouseleave.roundabout.autoplay", function() {
 									methods.startAutoplay.apply(self);
 								});
 						}
@@ -935,6 +935,7 @@
 						methods.animateToNextChild.apply(self, [callback]);
 					}, data.autoplayDuration);
 					data.autoplayIsRunning = true;
+					
 					self.trigger("autoplayStart");
 				});
 		},
@@ -942,12 +943,18 @@
 
 		// stopAutoplay
 		// stops autoplaying this roundabout
-		stopAutoplay: function() {
+		stopAutoplay: function(keepAutoplayBindings) {
 			return this
 				.each(function() {
 					clearInterval($(this).data("roundabout").autoplayInterval);
 					$(this).data("roundabout").autoplayInterval = null;
 					$(this).data("roundabout").autoplayIsRunning = false;
+					
+					// this will prevent autoplayPauseOnHover from restarting autoplay
+					if (!keepAutoplayBindings) {
+						$(this).unbind(".autoplay")
+					}
+					
 					$(this).trigger("autoplayStop");
 				});
 		},
