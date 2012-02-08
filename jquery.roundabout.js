@@ -689,14 +689,12 @@
 
 					// we're done animating
 					} else {
-						if (data.animating) {
-							self.trigger("animationEnd");
-						}
-
 						data.lastAnimationStep = true;
 
 						bearing = methods.normalize.apply(null, [bearing]);
-						methods.setBearing.apply(self, [bearing]);
+						methods.setBearing.apply(self, [bearing, function() {
+							self.trigger("animationEnd");
+						}]);
 						data.animating = false;
 						data.lastAnimationStep = false;
 						data.dragBearing = bearing;
