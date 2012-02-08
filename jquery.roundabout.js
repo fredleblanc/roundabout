@@ -1118,6 +1118,15 @@
 			// this calculation gives a bit of room for javascript float rounding
 			// errors, it looks on both 0deg and 360deg ends of the spectrum
 			return (diff <= data.floatComparisonThreshold || diff >= 360 - data.floatComparisonThreshold);
+		},
+		
+		
+		// getChildInFocus
+		// returns the current child in focus, or false if none are in focus
+		getChildInFocus: function() {
+			var data = $(this).data("roundabout");
+			
+			return (data.childInFocus > -1) ? data.childInFocus : false;
 		}
 	};
 
