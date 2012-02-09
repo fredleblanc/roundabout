@@ -1,5 +1,5 @@
 /**
- * jQuery Roundabout - v2.1.1
+ * jQuery Roundabout - v2.2.1
  * http://fredhq.com/projects/roundabout
  *
  * Moves list-items of enabled ordered and unordered lists long
@@ -10,7 +10,7 @@
  * 
  * Open source under the BSD license
  *
- * Copyright (c) 2011, Fred LeBlanc
+ * Copyright (c) 2011-2012, Fred LeBlanc
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -158,152 +158,157 @@
 							)
 						);
 
-					// bind based on settings if this init call was not a relayout
-					if (!relayout) {
-						// bind click-to-focus
-						if (settings.clickToFocus) {
-							self
-								.children(settings.childSelector)
-								.each(function(i) {
-									$(this)
-										.bind("click.roundabout", function() {
-											var degrees = methods.getPlacement.apply(self, [i]);
-
-											if (!methods.isInFocus.apply(self, [degrees])) {
-												methods.stopAnimation.apply($(this));
-												if (!self.data("roundabout").animating) {
-													methods.animateBearingToFocus.apply(self, [degrees, self.data("roundabout").clickToFocusCallback]);
-												}
-												return false;
-											}
-										});
-								});
-						}
-
-						// bind next buttons
-						if (settings.btnNext) {
-							$(settings.btnNext)
-								.bind("click.roundabout", function() {
-									if (!self.data("roundabout").animating) {
-										methods.animateToNextChild.apply(self, [self.data("roundabout").btnNextCallback]);
-									}
-									return false;
-								});
-						}
-
-						// bind previous buttons
-						if (settings.btnPrev) {
-							$(settings.btnPrev)
-								.bind("click.roundabout", function() {
-									methods.animateToPreviousChild.apply(self, [self.data("roundabout").btnPrevCallback]);
-									return false;
-								});
-						}
-
-						// bind toggle autoplay buttons
-						if (settings.btnToggleAutoplay) {
-							$(settings.btnToggleAutoplay)
-								.bind("click.roundabout", function() {
-									methods.toggleAutoplay.apply(self);
-									return false;
-								});
-						}
-
-						// bind start autoplay buttons
-						if (settings.btnStartAutoplay) {
-							$(settings.btnStartAutoplay)
-								.bind("click.roundabout", function() {
-									methods.startAutoplay.apply(self);
-									return false;
-								});
-						}
-
-						// bind stop autoplay buttons
-						if (settings.btnStopAutoplay) {
-							$(settings.btnStopAutoplay)
-								.bind("click.roundabout", function() {
-									methods.stopAutoplay.apply(self);
-									return false;
-								});
-						}
-
-						// autoplay pause on hover
-						if (settings.autoplayPauseOnHover) {
-							self
-								.bind("mouseenter.roundabout.autoplay", function() {
-									methods.stopAutoplay.apply(self, [true]);
-								})
-								.bind("mouseleave.roundabout.autoplay", function() {
-									methods.startAutoplay.apply(self);
-								});
-						}
-
-						// drag and drop
-						if (settings.enableDrag) {
-							// on screen
-							if (!$.isFunction(self.drag)) {
-								if (settings.debug) {
-									alert("You do not have the drag plugin loaded.");
-								}
-							} else if (!$.isFunction(self.drop)) {
-								if (settings.debug) {
-									alert("You do not have the drop plugin loaded.");
-								}
-							} else {
-								self
-									.drag(function(e, properties) {
-										var data = self.data("roundabout"),
-										    delta = (data.dragAxis.toLowerCase() === "x") ? "deltaX" : "deltaY";
-										methods.stopAnimation.apply(self);
-										methods.setBearing.apply(self, [data.dragBearing + properties[delta] / data.dragFactor]);
-									})
-									.drop(function(e) {
-										var data = self.data("roundabout"),
-										    method = methods.getAnimateToMethod(data.dropAnimateTo);
-										methods.allowAnimation.apply(self);
-										methods[method].apply(self, [data.dropDuration, data.dropEasing, data.dropCallback]);
-										data.dragBearing = data.period * methods.getNearestChild.apply(self);
-									});
-							}
-
-							// on mobile
-							self
-								.each(function() {
-									var element = $(this).get(0),
-									    data = $(this).data("roundabout"),
-									    page = (data.dragAxis.toLowerCase() === "x") ? "pageX" : "pageY",
-									    method = methods.getAnimateToMethod(data.dropAnimateTo);
-
-									// some versions of IE don't like this
-									if (element.addEventListener) {
-										element.addEventListener("touchstart", function(e) {
-											data.touchMoveStartPosition = e.touches[0][page];
-										}, false);
-
-										element.addEventListener("touchmove", function(e) {
-											var delta = (e.touches[0][page] - data.touchMoveStartPosition) / data.dragFactor;
-											e.preventDefault();
-											methods.stopAnimation.apply($(this));
-											methods.setBearing.apply($(this), [data.dragBearing + delta]);
-										}, false);
-
-										element.addEventListener("touchend", function(e) {
-											e.preventDefault();
-											methods.allowAnimation.apply($(this));
-											method = methods.getAnimateToMethod(data.dropAnimateTo);
-											methods[method].apply($(this), [data.dropDuration, data.dropEasing, data.dropCallback]);
-											data.dragBearing = data.period * methods.getNearestChild.apply($(this));
-										}, false);
-									}
-								});
-						}
-
-						// responsive
+					// unbind any events that we set if we're relaying out
+					if (relayout) {
+						self
+							.unbind(".roundabout")
+							.children(settings.childSelector)
+								.unbind(".roundabout");
+					} else {
+						// bind responsive action
 						if (settings.responsive) {
-							$(window).resize(function() {
+							$(window).bind("resize", function() {
 								methods.relayoutChildren.apply(self);
 							});
 						}
+					}
+
+					// bind click-to-focus
+					if (settings.clickToFocus) {
+						self
+							.children(settings.childSelector)
+							.each(function(i) {
+								$(this)
+									.bind("click.roundabout", function() {
+										var degrees = methods.getPlacement.apply(self, [i]);
+
+										if (!methods.isInFocus.apply(self, [degrees])) {
+											methods.stopAnimation.apply($(this));
+											if (!self.data("roundabout").animating) {
+												methods.animateBearingToFocus.apply(self, [degrees, self.data("roundabout").clickToFocusCallback]);
+											}
+											return false;
+										}
+									});
+							});
+					}
+
+					// bind next buttons
+					if (settings.btnNext) {
+						$(settings.btnNext)
+							.bind("click.roundabout", function() {
+								if (!self.data("roundabout").animating) {
+									methods.animateToNextChild.apply(self, [self.data("roundabout").btnNextCallback]);
+								}
+								return false;
+							});
+					}
+
+					// bind previous buttons
+					if (settings.btnPrev) {
+						$(settings.btnPrev)
+							.bind("click.roundabout", function() {
+								methods.animateToPreviousChild.apply(self, [self.data("roundabout").btnPrevCallback]);
+								return false;
+							});
+					}
+
+					// bind toggle autoplay buttons
+					if (settings.btnToggleAutoplay) {
+						$(settings.btnToggleAutoplay)
+							.bind("click.roundabout", function() {
+								methods.toggleAutoplay.apply(self);
+								return false;
+							});
+					}
+
+					// bind start autoplay buttons
+					if (settings.btnStartAutoplay) {
+						$(settings.btnStartAutoplay)
+							.bind("click.roundabout", function() {
+								methods.startAutoplay.apply(self);
+								return false;
+							});
+					}
+
+					// bind stop autoplay buttons
+					if (settings.btnStopAutoplay) {
+						$(settings.btnStopAutoplay)
+							.bind("click.roundabout", function() {
+								methods.stopAutoplay.apply(self);
+								return false;
+							});
+					}
+
+					// autoplay pause on hover
+					if (settings.autoplayPauseOnHover) {
+						self
+							.bind("mouseenter.roundabout.autoplay", function() {
+								methods.stopAutoplay.apply(self, [true]);
+							})
+							.bind("mouseleave.roundabout.autoplay", function() {
+								methods.startAutoplay.apply(self);
+							});
+					}
+
+					// drag and drop
+					if (settings.enableDrag) {
+						// on screen
+						if (!$.isFunction(self.drag)) {
+							if (settings.debug) {
+								alert("You do not have the drag plugin loaded.");
+							}
+						} else if (!$.isFunction(self.drop)) {
+							if (settings.debug) {
+								alert("You do not have the drop plugin loaded.");
+							}
+						} else {
+							self
+								.drag(function(e, properties) {
+									var data = self.data("roundabout"),
+									    delta = (data.dragAxis.toLowerCase() === "x") ? "deltaX" : "deltaY";
+									methods.stopAnimation.apply(self);
+									methods.setBearing.apply(self, [data.dragBearing + properties[delta] / data.dragFactor]);
+								})
+								.drop(function(e) {
+									var data = self.data("roundabout"),
+									    method = methods.getAnimateToMethod(data.dropAnimateTo);
+									methods.allowAnimation.apply(self);
+									methods[method].apply(self, [data.dropDuration, data.dropEasing, data.dropCallback]);
+									data.dragBearing = data.period * methods.getNearestChild.apply(self);
+								});
+						}
+
+						// on mobile
+						self
+							.each(function() {
+								var element = $(this).get(0),
+								    data = $(this).data("roundabout"),
+								    page = (data.dragAxis.toLowerCase() === "x") ? "pageX" : "pageY",
+								    method = methods.getAnimateToMethod(data.dropAnimateTo);
+
+								// some versions of IE don't like this
+								if (element.addEventListener) {
+									element.addEventListener("touchstart", function(e) {
+										data.touchMoveStartPosition = e.touches[0][page];
+									}, false);
+
+									element.addEventListener("touchmove", function(e) {
+										var delta = (e.touches[0][page] - data.touchMoveStartPosition) / data.dragFactor;
+										e.preventDefault();
+										methods.stopAnimation.apply($(this));
+										methods.setBearing.apply($(this), [data.dragBearing + delta]);
+									}, false);
+
+									element.addEventListener("touchend", function(e) {
+										e.preventDefault();
+										methods.allowAnimation.apply($(this));
+										method = methods.getAnimateToMethod(data.dropAnimateTo);
+										methods[method].apply($(this), [data.dropDuration, data.dropEasing, data.dropCallback]);
+										data.dragBearing = data.period * methods.getNearestChild.apply($(this));
+									}, false);
+								}
+							});
 					}
 
 					// start children
@@ -325,7 +330,7 @@
 				    degrees = methods.getPlacement.apply(self, [i]);
 
 				// on relayout, grab these values from current data
-				if (relayout) {
+				if (relayout && $(this).data("roundabout")) {
 					startWidth = $(this).data("roundabout").startWidth;
 					startHeight = $(this).data("roundabout").startHeight;
 					startFontSize = $(this).data("roundabout").startFontSize;
