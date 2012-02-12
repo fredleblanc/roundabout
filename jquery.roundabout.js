@@ -1,5 +1,5 @@
 /**
- * jQuery Roundabout - v2.2.1
+ * jQuery Roundabout - v2.3
  * http://fredhq.com/projects/roundabout
  *
  * Moves list-items of enabled ordered and unordered lists long
@@ -89,6 +89,7 @@
 		autoplayDuration: 1000,
 		autoplayPauseOnHover: false,
 		autoplayCallback: function() {},
+		autoplayInitialDelay: 0,
 		enableDrag: false,
 		dropDuration: 600,
 		dropEasing: "swing",
@@ -104,6 +105,7 @@
 	internalData = {
 		autoplayInterval: null,
 		autoplayIsRunning: false,
+		autoplayStartTimeout: null,
 		animating: false,
 		childInFocus: -1,
 		touchMoveStartPosition: null,
@@ -362,7 +364,9 @@
 
 			// start autoplay if necessary
 			if (data.autoplay) {
-				methods.startAutoplay.apply(self);
+				data.autoplayStartTimeout = setTimeout(function() {
+					methods.startAutoplay.apply(self);
+				}, data.autoplayInitialDelay);
 			}
 
 			self.trigger('ready');
@@ -955,7 +959,7 @@
 					
 					// this will prevent autoplayPauseOnHover from restarting autoplay
 					if (!keepAutoplayBindings) {
-						$(this).unbind(".autoplay")
+						$(this).unbind(".autoplay");
 					}
 					
 					$(this).trigger("autoplayStop");
