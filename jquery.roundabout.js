@@ -1,5 +1,5 @@
 /**
- * jQuery Roundabout - v2.3
+ * jQuery Roundabout - v2.4
  * http://fredhq.com/projects/roundabout
  *
  * Moves list-items of enabled ordered and unordered lists long
@@ -50,9 +50,9 @@
 			lazySusan: function (r, a, t) {
 				return {
 					x: Math.sin(r + a),
-					y: (Math.sin(r + 3*Math.PI/2 + a) / 8) * t,
+					y: (Math.sin(r + 3 * Math.PI / 2 + a) / 8) * t,
 					z: (Math.cos(r + a) + 1) / 2,
-					scale: (Math.sin(r + Math.PI/2 + a) / 2) + 0.5
+					scale: (Math.sin(r + Math.PI / 2 + a) / 2) + 0.5
 				};
 			}
 		}
@@ -687,6 +687,11 @@
 							newBearing = $.easing[thisEasingType]((timer / passedData.totalTime), timer, passedData.start, bearing - passedData.start, passedData.totalTime);
 						}
 
+						// fixes issue #24, animation changed as of jQuery 1.7.2
+						if (methods.compareVersions.apply(null, [$().jquery, "1.7.2"]) >= 0) {
+							newBearing = passedData.start + ((bearing - passedData.start) * newBearing);
+						}
+
 						newBearing = methods.normalize.apply(null, [newBearing]);
 						data.dragBearing = newBearing;
 
@@ -1015,7 +1020,7 @@
 
 
 		// helpers
-		// -----------------------------------------------------------------------		
+		// -----------------------------------------------------------------------
 
 		// normalize
 		// regulates degrees to be >= 0.0 and < 360
@@ -1136,6 +1141,42 @@
 			var data = $(this).data("roundabout");
 			
 			return (data.childInFocus > -1) ? data.childInFocus : false;
+		},
+
+
+		// compareVersions
+		// compares a given version string with another
+		compareVersions: function(baseVersion, compareVersion) {
+			var i,
+			    base = baseVersion.split(/\./i),
+			    compare = compareVersion.split(/\./i),
+			    maxVersionSegmentLength = (base.length > compare.length) ? base.length : compare.length;
+
+			for (i = 0; i <= maxVersionSegmentLength; i++) {
+				if (base[i] && !compare[i] && parseInt(base[i], 10) !== 0) {
+					// base is higher
+					return 1;
+				} else if (compare[i] && !base[i] && parseInt(compare[i], 10) !== 0) {
+					// compare is higher
+					return -1;
+				} else if (base[i] === compare[i]) {
+					// these are the same, next
+					continue;
+				}
+
+				if (base[i] && compare[i]) {
+					if (parseInt(base[i], 10) > parseInt(compare[i], 10)) {
+						// base is higher
+						return 1;
+					} else {
+						// compare is higher
+						return -1;
+					}
+				}
+			}
+
+			// nothing was triggered, versions are the same
+			return 0;
 		}
 	};
 
