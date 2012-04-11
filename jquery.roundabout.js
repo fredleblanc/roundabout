@@ -170,6 +170,7 @@
 						// bind responsive action
 						if (settings.responsive) {
 							$(window).bind("resize", function() {
+								methods.stopAutoplay.apply(self);
 								methods.relayoutChildren.apply(self);
 							});
 						}
