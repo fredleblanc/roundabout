@@ -1,5 +1,5 @@
 /**
- * jQuery Roundabout - v2.4
+ * jQuery Roundabout - v2.4.2
  * http://fredhq.com/projects/roundabout
  *
  * Moves list-items of enabled ordered and unordered lists long
@@ -689,7 +689,8 @@
 						}
 
 						// fixes issue #24, animation changed as of jQuery 1.7.2
-						if (methods.compareVersions.apply(null, [$().jquery, "1.7.2"]) >= 0) {
+						// also addresses issue #29, using easing breaks "linear"
+						if (methods.compareVersions.apply(null, [$().jquery, "1.7.2"]) >= 0 && !($.easing["easeOutBack"])) {
 							newBearing = passedData.start + ((bearing - passedData.start) * newBearing);
 						}
 
