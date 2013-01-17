@@ -26,6 +26,7 @@
     "3d"
   ],
   "homepage": "http://fredhq.com/projects/roundabout",
+  "download": "http://fredhq.com/projects/roundabout",
   "docs": "http://fredhq.com/projects/roundabout",
   "demo": "http://fredhq.com/projects/roundabout#/demos",
   "bugs": "https://github.com/fredhq/roundabout/issues"
