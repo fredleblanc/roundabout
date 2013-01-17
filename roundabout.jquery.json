@@ -10,7 +10,7 @@
   },
   "licenses": [
     {
-      "type": "BSD",
+      "type": "BSD-3-Clause",
       "url": "http://opensource.org/licenses/BSD-3-Clause"
     }
   ],
