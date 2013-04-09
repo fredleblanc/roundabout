@@ -40,7 +40,6 @@
  */
 (function($) {
 	"use strict";
-	
 	var defaults, internalData, methods;
 
 	// add default shape
@@ -110,7 +109,8 @@
 		childInFocus: -1,
 		touchMoveStartPosition: null,
 		stopAnimation: false,
-		lastAnimationStep: false
+		lastAnimationStep: false,
+        touchSupported: null
 	};
 
 	methods = {
@@ -137,7 +137,14 @@
 					    period = 360.0 / childCount,
 					    startingChild = (settings.startingChild && settings.startingChild > (childCount - 1)) ? (childCount - 1) : settings.startingChild,
 					    startBearing = (settings.startingChild === null) ? settings.bearing : 360 - (startingChild * period),
-					    holderCSSPosition = (self.css("position") !== "static") ? self.css("position") : "relative";
+					    holderCSSPosition = (self.css("position") !== "static") ? self.css("position") : "relative",
+                        touchSupported  = ('ontouchstart' in window);
+
+                    console.log(touchSupported);
+                    $("#checker").text(touchSupported);
+                    if (touchSupported) {
+
+                    }
 
 					self
 						.css({  // starting styles
@@ -182,7 +189,7 @@
 							.children(settings.childSelector)
 							.each(function(i) {
 								$(this)
-									.bind("click.roundabout", function() {
+									.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 										var degrees = methods.getPlacement.apply(self, [i]);
 
 										if (!methods.isInFocus.apply(self, [degrees])) {
@@ -199,7 +206,7 @@
 					// bind next buttons
 					if (settings.btnNext) {
 						$(settings.btnNext)
-							.bind("click.roundabout", function() {
+							.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 								if (!self.data("roundabout").animating) {
 									methods.animateToNextChild.apply(self, [self.data("roundabout").btnNextCallback]);
 								}
@@ -210,7 +217,7 @@
 					// bind previous buttons
 					if (settings.btnPrev) {
 						$(settings.btnPrev)
-							.bind("click.roundabout", function() {
+							.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 								methods.animateToPreviousChild.apply(self, [self.data("roundabout").btnPrevCallback]);
 								return false;
 							});
@@ -219,7 +226,7 @@
 					// bind toggle autoplay buttons
 					if (settings.btnToggleAutoplay) {
 						$(settings.btnToggleAutoplay)
-							.bind("click.roundabout", function() {
+							.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 								methods.toggleAutoplay.apply(self);
 								return false;
 							});
@@ -228,7 +235,7 @@
 					// bind start autoplay buttons
 					if (settings.btnStartAutoplay) {
 						$(settings.btnStartAutoplay)
-							.bind("click.roundabout", function() {
+							.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 								methods.startAutoplay.apply(self);
 								return false;
 							});
@@ -237,7 +244,7 @@
 					// bind stop autoplay buttons
 					if (settings.btnStopAutoplay) {
 						$(settings.btnStopAutoplay)
-							.bind("click.roundabout", function() {
+							.bind(touchSupported? "touchstart.roundabout" : "click.roundabout", function() {
 								methods.stopAutoplay.apply(self);
 								return false;
 							});
@@ -622,8 +629,6 @@
 			callback.apply(this);
 			return this;
 		},
-
-
 
 		// animation
 		// -----------------------------------------------------------------------
