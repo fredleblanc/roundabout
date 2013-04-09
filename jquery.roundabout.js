@@ -109,8 +109,7 @@
 		childInFocus: -1,
 		touchMoveStartPosition: null,
 		stopAnimation: false,
-		lastAnimationStep: false,
-        touchSupported: null
+		lastAnimationStep: false
 	};
 
 	methods = {
