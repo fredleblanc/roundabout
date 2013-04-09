@@ -139,12 +139,6 @@
 					    holderCSSPosition = (self.css("position") !== "static") ? self.css("position") : "relative",
                         touchSupported  = ('ontouchstart' in window);
 
-                    console.log(touchSupported);
-                    $("#checker").text(touchSupported);
-                    if (touchSupported) {
-
-                    }
-
 					self
 						.css({  // starting styles
 							padding:   0,
