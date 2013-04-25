@@ -522,7 +522,7 @@
 			child.trigger("reposition");
 			
 			// callback
-			callback.apply(self);
+			callback.apply(child);
 
 			return methods.isInFocus.apply(self, [data.degrees]);
 		},
