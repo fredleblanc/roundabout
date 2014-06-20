@@ -43,6 +43,44 @@
 	
 	var defaults, internalData, methods;
 
+
+	// compareVersions
+	// compares a given version string with another
+	var compareVersions = function(baseVersion, compareVersion) {
+		var i,
+			base = baseVersion.split(/\./i),
+			compare = compareVersion.split(/\./i),
+			maxVersionSegmentLength = (base.length > compare.length) ? base.length : compare.length;
+
+		for (i = 0; i <= maxVersionSegmentLength; i++) {
+			if (base[i] && !compare[i] && parseInt(base[i], 10) !== 0) {
+				// base is higher
+				return 1;
+			} else if (compare[i] && !base[i] && parseInt(compare[i], 10) !== 0) {
+				// compare is higher
+				return -1;
+			} else if (base[i] === compare[i]) {
+				// these are the same, next
+				continue;
+			}
+
+			if (base[i] && compare[i]) {
+				if (parseInt(base[i], 10) > parseInt(compare[i], 10)) {
+					// base is higher
+					return 1;
+				} else {
+					// compare is higher
+					return -1;
+				}
+			}
+		}
+
+		// nothing was triggered, versions are the same
+		return 0;
+	};
+
+	var useUpdatedBearingCalculation = compareVersions.apply(null, [$.fn.jquery, "1.7.2"]) >= 0 && (compareVersions.apply(null, [$.ui.version, "1.9.1"]) >= 0 || !$.easing['easeOutBack']);
+
 	// add default shape
 	$.extend({
 		roundaboutShapes: {
@@ -688,9 +726,7 @@
 							newBearing = $.easing[thisEasingType]((timer / passedData.totalTime), timer, passedData.start, bearing - passedData.start, passedData.totalTime);
 						}
 
-						// fixes issue #24, animation changed as of jQuery 1.7.2
-						// also addresses issue #29, using easing breaks "linear"
-						if (methods.compareVersions.apply(null, [$().jquery, "1.7.2"]) >= 0 && !($.easing["easeOutBack"])) {
+						if (useUpdatedBearingCalculation) {
 							newBearing = passedData.start + ((bearing - passedData.start) * newBearing);
 						}
 
@@ -1144,42 +1180,6 @@
 			
 			return (data.childInFocus > -1) ? data.childInFocus : false;
 		},
-
-
-		// compareVersions
-		// compares a given version string with another
-		compareVersions: function(baseVersion, compareVersion) {
-			var i,
-			    base = baseVersion.split(/\./i),
-			    compare = compareVersion.split(/\./i),
-			    maxVersionSegmentLength = (base.length > compare.length) ? base.length : compare.length;
-
-			for (i = 0; i <= maxVersionSegmentLength; i++) {
-				if (base[i] && !compare[i] && parseInt(base[i], 10) !== 0) {
-					// base is higher
-					return 1;
-				} else if (compare[i] && !base[i] && parseInt(compare[i], 10) !== 0) {
-					// compare is higher
-					return -1;
-				} else if (base[i] === compare[i]) {
-					// these are the same, next
-					continue;
-				}
-
-				if (base[i] && compare[i]) {
-					if (parseInt(base[i], 10) > parseInt(compare[i], 10)) {
-						// base is higher
-						return 1;
-					} else {
-						// compare is higher
-						return -1;
-					}
-				}
-			}
-
-			// nothing was triggered, versions are the same
-			return 0;
-		}
 	};
 
 
