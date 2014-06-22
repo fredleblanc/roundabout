@@ -99,7 +99,8 @@
 		dragFactor: 4,
 		triggerFocusEvents: true,
 		triggerBlurEvents: true,
-		responsive: false
+		responsive: false,
+		css3Scale: false
 	};
 
 	internalData = {
@@ -489,16 +490,36 @@
 			factors.height = (factors.adjustedScale * data.startHeight).toFixed(4);
 
 			// update item
-			child
-				.css({
-					left: ((factors.x * info.midStage.width + info.nudge.width) - factors.width / 2.0).toFixed(0) + "px",
-					top: ((factors.y * info.midStage.height + info.nudge.height) - factors.height / 2.0).toFixed(0) + "px",
-					width: factors.width + "px",
-					height: factors.height + "px",
-					opacity: (info.opacity.min + (info.opacity.diff * factors.scale)).toFixed(2),
-					zIndex: Math.round(info.zValues.min + (info.zValues.diff * factors.z)),
-					fontSize: (factors.adjustedScale * data.startFontSize).toFixed(1) + "px"
-				});
+			if (self.data("roundabout").css3Scale){
+				child
+					.css({
+						left: ((factors.x * info.midStage.width + info.nudge.width) - factors.width / 2.0).toFixed(0) + "px",
+						top: ((factors.y * info.midStage.height + info.nudge.height) - factors.height / 2.0).toFixed(0) + "px",
+						'transform': 'scale('+factors.adjustedScale+')',
+						'-ms-transform':            'scale('+factors.adjustedScale+')',
+						'-moz-transform':           'scale('+factors.adjustedScale+')',
+						'-webkit-transform':        'scale('+factors.adjustedScale+')',
+						'-o-transform':             'scale('+factors.adjustedScale+')',
+						'transform-origin':         'left top',
+						'-ms-transform-origin':     'left top',
+						'-moz-transform-origin':    'left top',
+						'-webkit-transform-origin': 'left top',
+						'-o-transform-origin':      'left top',
+						opacity: (info.opacity.min + (info.opacity.diff * factors.scale)).toFixed(2),
+						zIndex: Math.round(info.zValues.min + (info.zValues.diff * factors.z))
+					});
+			} else {
+				child
+					.css({
+						left: ((factors.x * info.midStage.width + info.nudge.width) - factors.width / 2.0).toFixed(0) + "px",
+						top: ((factors.y * info.midStage.height + info.nudge.height) - factors.height / 2.0).toFixed(0) + "px",
+						width: factors.width + "px",
+						height: factors.height + "px",
+						opacity: (info.opacity.min + (info.opacity.diff * factors.scale)).toFixed(2),
+						zIndex: Math.round(info.zValues.min + (info.zValues.diff * factors.z)),
+						fontSize: (factors.adjustedScale * data.startFontSize).toFixed(1) + "px"
+					});
+			}
 			data.currentScale = factors.adjustedScale;
 
 			// for debugging purposes
