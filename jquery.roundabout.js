@@ -47,9 +47,9 @@
 	$.extend({
 		roundaboutShapes: {
 			def: "lazySusan",
-			lazySusan: function (r, a, t) {
+			lazySusan: function (r, a, t, w) {
 				return {
-					x: Math.sin(r + a),
+					x: Math.sin(r + a) * w,
 					y: (Math.sin(r + 3 * Math.PI / 2 + a) / 8) * t,
 					z: (Math.cos(r + a) + 1) / 2,
 					scale: (Math.sin(r + Math.PI / 2 + a) / 2) + 0.5
@@ -398,7 +398,8 @@
 							animating: data.animating,
 							inFocus: data.childInFocus,
 							focusBearingRadian: methods.degToRad.apply(null, [data.focusBearing]),
-							shape: $.roundaboutShapes[data.shape] || $.roundaboutShapes[$.roundaboutShapes.def]
+							shape: $.roundaboutShapes[data.shape] || $.roundaboutShapes[$.roundaboutShapes.def],
+							widthMultiplier: data.widthMultiplier || 1.0
 					    };
 
 					// calculations
@@ -480,7 +481,7 @@
 			rad = methods.normalizeRad.apply(null, [rad]);
 
 			// get factors from shape
-			factors = info.shape(rad, info.focusBearingRadian, info.tilt);
+			factors = info.shape(rad, info.focusBearingRadian, info.tilt, info.widthMultiplier);
 
 			// correct
 			factors.scale = (factors.scale > 1) ? 1 : factors.scale;
