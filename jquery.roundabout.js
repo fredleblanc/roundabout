@@ -247,10 +247,14 @@
 					if (settings.autoplayPauseOnHover) {
 						self
 							.bind("mouseenter.roundabout.autoplay", function() {
-								methods.stopAutoplay.apply(self, [true]);
+								if(settings.autoplay && methods.isAutoplaying.apply(self)) {
+									methods.stopAutoplay.apply(self, [true]);
+								}
 							})
 							.bind("mouseleave.roundabout.autoplay", function() {
-								methods.startAutoplay.apply(self);
+								if(settings.autoplay && !methods.isAutoplaying.apply(self)) {
+									methods.startAutoplay.apply(self);
+								}
 							});
 					}
 
