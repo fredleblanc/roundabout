@@ -169,7 +169,7 @@
 					} else {
 						// bind responsive action
 						if (settings.responsive) {
-							$(window).bind("resize", function() {
+							$(window).bind("resize.roundabout", function() {
 								methods.stopAutoplay.apply(self);
 								methods.relayoutChildren.apply(self);
 							});
@@ -1179,6 +1179,65 @@
 
 			// nothing was triggered, versions are the same
 			return 0;
+		},
+
+
+		
+		// destroy
+		// -----------------------------------------------------------------------
+
+		// destroy
+		// destroys roundabout instance, returning all code to its original state
+		destroy: function() {
+			var self = $(this),
+				data = self.data("roundabout");
+
+			// Unbind window listeners
+			$(window).unbind(".roundabout");
+
+			// Unset classes and css on self
+			self
+				.removeClass("roundabout-holder")
+				.removeAttr("style");
+
+			// Unset classes and css on children
+			self
+				.children(data.childSelector)
+				.removeClass("roundabout-moveable-item")
+				.removeClass("roundabout-in-focus")
+				.removeData("roundabout")
+				.removeAttr("style");
+
+			// Universal unbind
+			self
+				.children(data.childSelector)
+				.andSelf()
+				.unbind(".roundabout")
+				.unbind(".roundabout.autoplay");
+
+			// un-bind buttons
+			if (data.btnNext) {
+				$(data.btnNext).unbind(".roundabout");
+			}
+			if (data.btnPrev) {
+				$(data.btnPrev).bind(".roundabout");
+			}
+			if (data.btnToggleAutoplay) {
+				$(data.btnToggleAutoplay).bind(".roundabout");
+			}
+			if (data.btnStartAutoplay) {
+				$(data.btnStartAutoplay).bind(".roundabout");
+			}
+			if (data.btnStopAutoplay) {
+				$(data.btnStopAutoplay).bind(".roundabout");
+			}
+
+
+			// @todo: Can we namespace the element.addEventListeners set in the "// on mobile" section?
+
+			// Remove all assigned Data
+			self
+				.removeData("roundabout");
 		}
 	};
 
