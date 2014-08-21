@@ -77,6 +77,7 @@
 		btnStopAutoplay: null,
 		easing: "swing",
 		clickToFocus: true,
+		focusCallback: function() {},
 		clickToFocusCallback: function() {},
 		focusBearing: 0.0,
 		shape: "lazySusan",
@@ -188,6 +189,7 @@
 										if (!methods.isInFocus.apply(self, [degrees])) {
 											methods.stopAnimation.apply($(this));
 											if (!self.data("roundabout").animating) {
+												self.data("roundabout").focusCallback();
 												methods.animateBearingToFocus.apply(self, [degrees, self.data("roundabout").clickToFocusCallback]);
 											}
 											return false;
