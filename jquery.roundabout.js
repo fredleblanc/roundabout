@@ -1,4 +1,8 @@
 /**
+ * jQuery Roundabout - v2.4.3
+ * Resolved changing size bug and crashing if loading images was too big 
+ **/
+/**
  * jQuery Roundabout - v2.4.2
  * http://fredhq.com/projects/roundabout
  *
@@ -169,7 +173,7 @@
 					} else {
 						// bind responsive action
 						if (settings.responsive) {
-							$(window).bind("resize", function() {
+							$(window).bind("resize.roundabout", function() {
 								methods.stopAutoplay.apply(self);
 								methods.relayoutChildren.apply(self);
 							});
@@ -328,6 +332,13 @@
 
 			callback = callback || function() {};
 			
+			if(relayout){
+		                data.relayoutProportion = self.width() / data.startWidth
+		            }else{
+		                data.relayoutProportion = 1; 
+		                data.startWidth = self.width();
+		            } 
+            
 			self.children(data.childSelector).each(function(i) {
 				var startWidth, startHeight, startFontSize,
 				    degrees = methods.getPlacement.apply(self, [i]);
@@ -470,6 +481,7 @@
 			var factors,
 			    self = this,
 			    child = $(childElement),
+			    selfData = self.data("roundabout"),
 			    data = child.data("roundabout"),
 			    out = [],
 			    rad = methods.degToRad.apply(null, [(360.0 - data.degrees) + info.bearing]);
@@ -484,7 +496,7 @@
 
 			// correct
 			factors.scale = (factors.scale > 1) ? 1 : factors.scale;
-			factors.adjustedScale = (info.scale.min + (info.scale.diff * factors.scale)).toFixed(4);
+			factors.adjustedScale = ((info.scale.min + (info.scale.diff * factors.scale)).toFixed(4)) * selfData.relayoutProportion;
 			factors.width = (factors.adjustedScale * data.startWidth).toFixed(4);
 			factors.height = (factors.adjustedScale * data.startHeight).toFixed(4);
 
@@ -1141,8 +1153,12 @@
 		// returns the current child in focus, or false if none are in focus
 		getChildInFocus: function() {
 			var data = $(this).data("roundabout");
-			
-			return (data.childInFocus > -1) ? data.childInFocus : false;
+			if(typeof data !== 'undefined'){
+			    
+			    return (data.childInFocus > -1) ? data.childInFocus : false;
+			}else{
+			    return false;
+			}
 		},
 
 
