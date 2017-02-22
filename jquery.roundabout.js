@@ -238,7 +238,7 @@
 					if (settings.btnStopAutoplay) {
 						$(settings.btnStopAutoplay)
 							.bind("click.roundabout", function() {
-								methods.stopAutoplay.apply(self);
+								methods.stopAutoplay.apply(self, [!!settings.autoplayPauseOnHover]);
 								return false;
 							});
 					}
@@ -1011,7 +1011,7 @@
 					data.autoplayDuration = duration;
 
 					if (methods.isAutoplaying.apply(self)) {
-						methods.stopAutoplay.apply(self);
+						methods.stopAutoplay.apply(self, [!!settings.autoplayPauseOnHover]);
 						setTimeout(function() {
 							methods.startAutoplay.apply(self);
 						}, 10);
